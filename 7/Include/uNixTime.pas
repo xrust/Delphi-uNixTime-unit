@@ -36,7 +36,9 @@ function UnixTimeMsToDtm(UTime:Double):TDateTime;overload;          // Convert U
 function GetMsOfCurrTime:Int64;                                     // Returns Miliseconds Of Current Time
 function GetMsOfDateTime(Dtm:TDateTime):Int64;                      // Returns Miliseconds Of Gived TDateTime
 function DaySecondsCount:Int64;                                     // Returns Count Of Seconds From Day Start
-function DayMinutesCount:Int64;                                     // Returns Count Of Minutes From Day Start 
+function DayMinutesCount:Int64;                                     // Returns Count Of Minutes From Day Start
+function DayStartTime(Dtm:TDateTime=0):Int64;overload;              // Returns UNIX Time Of Start Of Day
+function DayStartTime(UnixDtm:Int64=0):Int64;overload;              // Returns UNIX Time Of Start Of Day
 //+------------------------------------------------------------------+
 function IsNewUnixDay:Boolean;                                      // Returns true if The New day Starts between requests
 function IsNewUtcDay:Boolean;                                       // Returns true if The New UTC day Starts between requests
@@ -221,6 +223,26 @@ begin
         Result:=cTime-60;
     end else begin
         Result:=cTime-(cTime mod 60);
+    end;
+end;
+//+------------------------------------------------------------------+
+function DayStartTime(Dtm:TDateTime=0):Int64;var cTime:Int64;
+begin
+    if( Dtm = 0 )then begin
+        cTime := Trunc((Now-25569.0)*86400);
+    end else begin
+        cTime := Trunc((Dtm-25569.0)*86400);
+    end;
+    Result:=cTime-(cTime mod 86400);
+end;
+//+------------------------------------------------------------------+
+function DayStartTime(UnixDtm:Int64=0):Int64;var cTime:Int64;
+begin
+    if( UnixDtm = 0 )then begin
+        cTime:=UtcTimeCurrent;
+        Result:=cTime-(cTime mod 86400);
+    end else begin
+        Result:=UnixDtm-(UnixDtm mod 86400);
     end;
 end;
 //+------------------------------------------------------------------+
